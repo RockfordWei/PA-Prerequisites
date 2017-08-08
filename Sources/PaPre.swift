@@ -11,14 +11,30 @@ public extension Data {
 
 public class MacOSInfo {
 
+  public static var Homebrew: String? {
+    let task = Process()
+    task.launchPath = "/bin/bash"
+    task.arguments = ["-c", "/usr/local/bin/brew --version"]
+    let oup = Pipe()
+    task.standardOutput = oup
+    task.launch()
+    task.waitUntilExit()
+    if let o = oup.fileHandleForReading.readDataToEndOfFile().string {
+      let x = o.replacingOccurrences(of: "Homebrew ", with: "")
+      let y = x.characters.split(separator: "\n").map { String($0) }
+      if y.count > 1 {
+        return y[0]
+      }
+    }
+    return nil
+  }
+
   public static var Swift: [String:String] {
     let task = Process()
     task.launchPath = "/bin/bash"
     task.arguments = ["-c", "swift --version"]
     let oup = Pipe()
-    let erp = Pipe()
     task.standardOutput = oup
-    task.standardError = erp
     task.launch()
     task.waitUntilExit()
     var dic: [String: String] = [:]
@@ -36,10 +52,8 @@ public class MacOSInfo {
       } else {
         dic["Error"] = "Parse Fault: \(o)"
       }
-    } else if let o = erp.fileHandleForReading.readDataToEndOfFile().string {
-      dic["Error"] = "Unexpected: \(o)"
     } else {
-      dic["Error"] = "Unknow"
+      dic["Error"] = "Unknown"
     }
     return dic
   }

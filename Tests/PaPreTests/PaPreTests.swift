@@ -44,9 +44,17 @@ class PaPreTests: XCTestCase {
     self.wait(for: [ex], timeout: 10)
   }
 
+  func testHomebrew() {
+    guard let brew = MacOSInfo.Homebrew else {
+      XCTFail("Homebrew Not installed")
+      return
+    }
+    print(brew)
+  }
   static var allTests = [
     ("testSwift", testSwift),
     ("testXcode", testXcode),
-    ("testPing", testPing)
+    ("testPing", testPing),
+    ("testHomebrew", testHomebrew)
     ]
 }

@@ -1,8 +1,15 @@
-# MacOS & Xcode / Swift Version Info Checker
+# MacOS Info Checker
+
+This library provides runtime info of Xcode / Swift / Homebrew installations.
 
 
 ``` swift
 import PaPre
+
+if let brew = MacOSInfo.Homebrew {
+	print(brew)
+	// will be 1.3.0 
+}
 
 let sw = MacOSInfo.Swift
 print(sw["Swift"] ?? "Swift Version Fault")
