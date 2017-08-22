@@ -12,7 +12,7 @@ public extension Data {
 public class DockerCloud {
   var then = DispatchTime.now()
   public init() { }
-  public func speedTest(_ completion: @escaping (Double) -> Void) {
+  public func speedTest(_ completion: @escaping (Int) -> Void) {
     guard let url = URL(string: "https://cloud.docker.com") else {
       completion(-1)
       return
@@ -24,8 +24,8 @@ public class DockerCloud {
         completion(-1)
       } else {
         let now = DispatchTime.now()
-        let d = Double(now.uptimeNanoseconds - self.then.uptimeNanoseconds)
-        completion(d / 1e9)
+        let d = Double(now.uptimeNanoseconds - self.then.uptimeNanoseconds) / 1e6
+        completion(Int(d))
       }
     }
     task.resume()
@@ -33,6 +33,38 @@ public class DockerCloud {
 }
 
 public class MacOSInfo {
+
+  public static var DockerVersion: String? {
+    let task = Process()
+    task.launchPath = "/bin/bash"
+    task.arguments = ["-c", "/usr/local/bin/docker -v"]
+    let oup = Pipe()
+    task.standardOutput = oup
+    task.launch()
+    task.waitUntilExit()
+    if let o = oup.fileHandleForReading.readDataToEndOfFile().string {
+      var y = o
+      y.append(Character("\0"))
+      let x = y.replacingOccurrences(of: "Docker version ", with: "")
+      return x
+    }
+    return nil
+  }
+
+  public static var DockerApp: Bool {
+    let task = Process()
+    task.launchPath = "/bin/bash"
+    task.arguments = ["-c", "/usr/local/bin/docker ps"]
+    let oup = Pipe()
+    task.standardOutput = oup
+    task.launch()
+    task.waitUntilExit()
+    if let o = oup.fileHandleForReading.readDataToEndOfFile().string,
+      !o.contains("Error") {
+      return true
+    }
+    return false
+  }
 
   public static var Homebrew: String? {
     let task = Process()

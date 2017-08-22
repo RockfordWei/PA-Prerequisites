@@ -39,8 +39,16 @@ MacOSInfo.Ping(ip: "github.com", timeout: 3) { metrics in
 
 let docker = DockerCloud()
 docker.speedTest { latency in
-  // normally latency is around 0.23 seconds.
+  // normally latency is around 300 ms
   print("docker cloud latency", latency)
 }
 
+if let v = MacOSInfo.DockerVersion {
+	print(v)
+	// v looks like '17.07.0-ce-rc2, build 36ce605'
+}
+
+if MacOSInfo.DockerApp {
+	print("Docker is running")
+}
 ```

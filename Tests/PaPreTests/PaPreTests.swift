@@ -52,16 +52,28 @@ class PaPreTests: XCTestCase {
     print(brew)
   }
 
-  func testDocker() {
+  func testDockerCloud() {
     let ex = self.expectation(description: "docker")
     let docker = DockerCloud()
     docker.speedTest { latency in
       XCTAssertGreaterThan(latency, 0)
-      // normally latency is around 0.23 seconds.
+      // normally latency is around 300 ms.
       print("docker cloud latency", latency)
       ex.fulfill()
     }
     self.wait(for: [ex], timeout: 10)
+  }
+
+  func testDockerVersion() {
+    guard let v = MacOSInfo.DockerVersion else {
+      XCTFail("docker version")
+      return
+    }
+    print(v)
+  }
+
+  func testDockerRun() {
+    XCTAssertTrue(MacOSInfo.DockerApp)
   }
 
   static var allTests = [
@@ -69,6 +81,7 @@ class PaPreTests: XCTestCase {
     ("testXcode", testXcode),
     ("testPing", testPing),
     ("testHomebrew", testHomebrew),
-    ("testDocker", testDocker)
+    ("testDockerCloud", testDockerCloud),
+    ("testDockerVersion", testDockerVersion)
     ]
 }
