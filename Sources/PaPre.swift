@@ -9,6 +9,29 @@ public extension Data {
   }
 }
 
+public class DockerCloud {
+  var then = DispatchTime.now()
+  public init() { }
+  public func speedTest(_ completion: @escaping (Double) -> Void) {
+    guard let url = URL(string: "https://cloud.docker.com") else {
+      completion(-1)
+      return
+    }
+
+    self.then = DispatchTime.now()
+    let task = URLSession.shared.dataTask(with: url) { _, _, err in
+      if let _ = err {
+        completion(-1)
+      } else {
+        let now = DispatchTime.now()
+        let d = Double(now.uptimeNanoseconds - self.then.uptimeNanoseconds)
+        completion(d / 1e9)
+      }
+    }
+    task.resume()
+  }
+}
+
 public class MacOSInfo {
 
   public static var Homebrew: String? {

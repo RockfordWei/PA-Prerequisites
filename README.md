@@ -36,4 +36,11 @@ MacOSInfo.Ping(ip: "github.com", timeout: 3) { metrics in
   print(metrics["max"] ?? -1.0)
   print(metrics["stddev"] ?? -1.0)
 }
+
+let docker = DockerCloud()
+docker.speedTest { latency in
+  // normally latency is around 0.23 seconds.
+  print("docker cloud latency", latency)
+}
+
 ```
